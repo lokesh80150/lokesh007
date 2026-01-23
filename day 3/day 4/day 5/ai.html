@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Interactive Food Delivery Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: Arial; background:#f4f6f9; margin:0 }
+.header { background:#1e90ff; color:white; padding:20px; font-size:26px; text-align:center }
+.container { padding:20px }
+.filters { display:flex; gap:20px; margin-bottom:20px }
+select { padding:10px; font-size:14px }
+.cards { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:30px }
+.card { background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,.1)}
+h2 { color:#1e90ff }
+.charts { display:grid; grid-template-columns:1fr 1fr; gap:20px }
+.chart-box { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,.1)}
+</style>
+</head>
+
+<body>
+
+<div class="header">🍔 Interactive Food Delivery Dashboard</div>
+
+<div class="container">
+
+<!-- Filters -->
+<div class="filters">
+    <select id="dateFilter">
+        <option value="All">All Dates</option>
+        <option value="01-03-2023">01-03-2023</option>
+        <option value="02-03-2023">02-03-2023</option>
+        <option value="03-03-2023">03-03-2023</option>
+        <option value="04-03-2023">04-03-2023</option>
+        <option value="05-03-2023">05-03-2023</option>
+    </select>
+
+    <select id="restaurantFilter">
+        <option value="All">All Restaurants</option>
+        <option value="211">211</option>
+        <option value="212">212</option>
+        <option value="213">213</option>
+        <option value="214">214</option>
+        <option value="216">216</option>
+        <option value="217">217</option>
+    </select>
+
+    <select id="paymentFilter">
+        <option value="All">All Payments</option>
+        <option value="UPI">UPI</option>
+        <option value="COD">COD</option>
+        <option value="Card">Card</option>
+    </select>
+</div>
+
+<!-- KPI Cards -->
+<div class="cards">
+    <div class="card"><h3>Total Orders</h3><h2 id="totalOrders">0</h2></div>
+    <div class="card"><h3>Delivered</h3><h2 id="delivered">0</h2></div>
+    <div class="card"><h3>Cancelled</h3><h2 id="cancelled">0</h2></div>
+    <div class="card"><h3>Total Quantity</h3><h2 id="quantity">0</h2></div>
+</div>
+
+<div class="charts">
+    <div class="chart-box"><canvas id="restaurantChart"></canvas></div>
+    <div class="chart-box"><canvas id="paymentChart"></canvas></div>
+</div>
+
+</div>
+
+<script>
+// SAMPLE DATA (can be replaced with your full JSON)
+const data = [
+ {date:"01-03-2023",rest:211,qty:4,status:"Delivered",pay:"UPI"},
+ {date:"01-03-2023",rest:212,qty:1,status:"Delivered",pay:"UPI"},
+ {date:"02-03-2023",rest:212,qty:10,status:"Delivered",pay:"COD"},
+ {date:"02-03-2023",rest:213,qty:7,status:"Delivered",pay:"UPI"},
+ {date:"03-03-2023",rest:217,qty:10,status:"Delivered",pay:"COD"},
+ {date:"04-03-2023",rest:211,qty:8,status:"Delivered",pay:"UPI"},
+ {date:"04-03-2023",rest:212,qty:6,status:"Cancelled",pay:"COD"},
+ {date:"05-03-2023",rest:214,qty:9,status:"Delivered",pay:"UPI"}
+];
+
+let restaurantChart, paymentChart;
+
+function updateDashboard(){
+    const date = dateFilter.value;
+    const rest = restaurantFilter.value;
+    const pay = paymentFilter.value;
+
+    let filtered = data.filter(d =>
+        (date=="All" || d.date==date) &&
+        (rest=="All" || d.rest==rest) &&
+        (pay=="All" || d.pay==pay)
+    );
+
+    totalOrders.innerText = filtered.length;
+    delivered.innerText = filtered.filter(d=>d.status=="Delivered").length;
+    cancelled.innerText = filtered.filter(d=>d.status=="Cancelled").length;
+    quantity.innerText = filtered.reduce((a,b)=>a+b.qty,0);
+
+    // Restaurant data
+    let restMap = {};
+    filtered.forEach(d => restMap[d.rest]=(restMap[d.rest]||0)+1);
+
+    // Payment data
+    let payMap = {};
+    filtered.forEach(d => payMap[d.pay]=(payMap[d.pay]||0)+1);
+
+    if(restaurantChart) restaurantChart.destroy();
+    if(paymentChart) paymentChart.destroy();
+
+    restaurantChart = new Chart(document.getElementById('restaurantChart'),{
+        type:'bar',
+        data:{labels:Object.keys(restMap), datasets:[{label:'Orders', data:Object.values(restMap), backgroundColor:'#1e90ff'}]}
+    });
+
+    paymentChart = new Chart(document.getElementById('paymentChart'),{
+        type:'pie',
+        data:{labels:Object.keys(payMap), datasets:[{data:Object.values(payMap), backgroundColor:['#1e90ff','#ffa500','#32cd32']}]}
+    });
+}
+
+dateFilter.onchange = restaurantFilter.onchange = paymentFilter.onchange = updateDashboard;
+updateDashboard();
+</script>
+
+</body>
+</html>

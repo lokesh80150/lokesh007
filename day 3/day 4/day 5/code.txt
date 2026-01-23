@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+  margin: 0;
+  font-family: Inter, system-ui;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+header {
+  background: #020617;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.dashboard {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #020617;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(0,0,0,.4);
+}
+
+.kpi {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.grid-span-2 { grid-column: span 2; }
+
+.chat-box {
+  height: 240px;
+  overflow-y: auto;
+  border: 1px solid #1e293b;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.chat-msg {
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  color: white;
+}
+
+button {
+  background: #3b82f6;
+  color: white;
+  pad
